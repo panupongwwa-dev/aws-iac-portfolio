@@ -1,0 +1,17 @@
+# Reviewed gitleaks false positives. Every entry is pinned to the commit that
+# introduced the finding plus its exact file, rule and line. Entries without a
+# commit are deliberately NOT used: gitleaks treats them as global, so they
+# would also silence a real secret written on that line in any later commit.
+# Scan with `gitleaks git` (as CI does); `gitleaks dir` has no commit to match.
+
+# AWS Config delivery channel: the S3 prefix argument is set from a Terraform
+# input variable. The rule fires on the word "key" in the argument name.
+01d103abe5c52ffdf3b5aefc927c0105d7ca61f9:governance/config/main.tf:generic-api-key:238
+
+# Splunk PoC bootstrap: these REST calls authenticate with a shell variable
+# that the script fills at boot from AWS Secrets Manager (line 400). No
+# credential is written in the file.
+01d103abe5c52ffdf3b5aefc927c0105d7ca61f9:security/splunk-poc/user_data.sh.tpl:curl-auth-user:405
+01d103abe5c52ffdf3b5aefc927c0105d7ca61f9:security/splunk-poc/user_data.sh.tpl:curl-auth-user:409
+01d103abe5c52ffdf3b5aefc927c0105d7ca61f9:security/splunk-poc/user_data.sh.tpl:curl-auth-user:414
+01d103abe5c52ffdf3b5aefc927c0105d7ca61f9:security/splunk-poc/user_data.sh.tpl:curl-auth-user:415
