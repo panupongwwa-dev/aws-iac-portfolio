@@ -1,0 +1,20 @@
+# Placeholder values. Copy to terraform.tfvars (git-ignored) and replace them.
+# Each account needs its own root email; plus-addressing on one mailbox works.
+region = "ap-southeast-1"
+
+accounts = {
+  dev = {
+    name        = "workload-dev"
+    email       = "aws-root+workload-dev@example.com"
+    ou_id       = "ou-exmp-11111111"
+    environment = "dev"
+    tags        = { CostCenter = "example-workload" }
+  }
+  prod = {
+    name        = "workload-prod"
+    email       = "aws-root+workload-prod@example.com"
+    ou_id       = "ou-exmp-22222222"
+    environment = "prod"
+    tags        = { CostCenter = "example-workload" }
+  }
+}

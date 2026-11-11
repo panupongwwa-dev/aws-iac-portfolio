@@ -1,0 +1,52 @@
+# --- Terraform working files, state and plans: never commit ------------------
+# State and saved plans hold real resource attributes, sometimes secrets.
+**/.terraform/*
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.json
+tfplan
+**/tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# --- Variable files hold real IDs: only *.tfvars.example templates are committed
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# --- Credentials and keys -----------------------------------------------------
+.env
+.env.*
+.aws/
+credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa*
+id_ed25519*
+
+# --- Data exports and build artifacts: this repo holds code only --------------
+# Policies are written in HCL (jsonencode), so no JSON or CSV file belongs here.
+*.json
+*.csv
+*.xlsx
+*.zip
+*.exe
+*.bin
+
+# --- Local tooling ------------------------------------------------------------
+.claude/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

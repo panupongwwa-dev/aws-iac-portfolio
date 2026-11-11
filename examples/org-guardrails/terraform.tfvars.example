@@ -1,0 +1,13 @@
+# Placeholder values. Copy to terraform.tfvars (git-ignored) and replace them.
+region = "ap-southeast-1"
+
+ous = {
+  development = "ou-exmp-11111111"
+  production  = "ou-exmp-22222222"
+  security    = "ou-exmp-33333333"
+}
+
+tags = {
+  ManagedBy = "terraform"
+  Stack     = "org-guardrails"
+}

@@ -1,0 +1,9 @@
+# Placeholder values. Copy to terraform.tfvars (git-ignored) and replace them.
+region = "ap-southeast-1"
+
+github_org = "example-org"
+infra_repo = "example-infra"
+site_repo  = "example-site"
+
+site_bucket_name      = "example-site-bucket"
+site_distribution_arn = "arn:aws:cloudfront::777788889999:distribution/EEXAMPLE123456"
