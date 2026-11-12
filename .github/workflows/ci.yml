@@ -18,6 +18,10 @@ jobs:
     name: gitleaks (full history)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      GITLEAKS_VERSION: "8.30.1"
+      # sha256 of gitleaks_8.30.1_linux_x64.tar.gz, from the release's checksums file.
+      GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
     steps:
       # Actions are pinned to full commit SHAs, not tags, so a moved tag
       # cannot change what runs here.
@@ -26,16 +30,28 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_VERSION: "8.30.1"
-          # A findings report would contain whatever leaked, so it is never
-          # published as an artifact, summary or PR comment. The job log
-          # (redacted) and a failed check are enough to act on.
-          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
-          GITLEAKS_ENABLE_SUMMARY: "false"
-          GITLEAKS_ENABLE_COMMENTS: "false"
+      # The gitleaks CLI runs directly instead of gitleaks-action. On push
+      # events the action scans only the pushed commit range, and a range
+      # that starts at the root commit fails and scans nothing at all.
+      - name: Install gitleaks (checksum verified)
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/gitleaks"
+          mkdir -p "$dir"
+          curl -sSfL --retry 3 -o "$dir/gitleaks.tar.gz" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  $dir/gitleaks.tar.gz" | sha256sum --check --strict -
+          tar -xzf "$dir/gitleaks.tar.gz" -C "$dir"
+          "$dir/gitleaks" version
+          echo "$dir" >> "$GITHUB_PATH"
+
+      # Every commit on every fetched ref, not just the ones in this push.
+      # Findings are printed redacted and no report file is written, because
+      # a report would contain whatever leaked. .gitleaksignore holds the
+      # reviewed false positives, each pinned to the commit it appears in.
+      - name: Scan every commit
+        run: |
+          gitleaks git . --redact --verbose --no-banner --log-opts="--all --full-history"
 
   terraform:
     name: terraform fmt + validate
